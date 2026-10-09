@@ -1,0 +1,85 @@
+# OpenInVim - Windows 11 File Explorer context menu for Vim
+# Copyright (C) 2026 Sylvain Cresto
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Build
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            vcarch: amd64
+          - arch: arm64
+            vcarch: amd64_arm64   # cross-compile on the x64 runner
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.vcarch }}
+
+    - name: Build
+      shell: cmd
+      run: nmake -nologo -f Make_mvc.mak
+
+    - name: Package
+      shell: powershell
+      env:
+        # Optional signing certificate: base64 of the .pfx, its password and
+        # its exact subject.  Without it, a test certificate is used.
+        SIGNING_PFX: ${{ secrets.SIGNING_PFX }}
+        SIGNING_PFX_PASSWORD: ${{ secrets.SIGNING_PFX_PASSWORD }}
+        SIGNING_PUBLISHER: ${{ secrets.SIGNING_PUBLISHER }}
+      run: |
+        # v1.2.3 tag -> 1.2.3.0, otherwise <VERSION file>.<run number>
+        if ("${{ github.ref_type }}" -eq "tag" -and "${{ github.ref_name }}" -match '^v(\d+)\.(\d+)\.(\d+)$') {
+          $version = "$($Matches[1]).$($Matches[2]).$($Matches[3]).0"
+        } else {
+          $version = "$((Get-Content -Raw VERSION).Trim()).${{ github.run_number }}"
+        }
+
+        if ($env:SIGNING_PFX) {
+          $pfx = Join-Path $env:RUNNER_TEMP "signing.pfx"
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:SIGNING_PFX))
+          .\make_package.ps1 -Version $version -Arch ${{ matrix.arch }} `
+            -Publisher $env:SIGNING_PUBLISHER -PfxPath $pfx -PfxPassword $env:SIGNING_PFX_PASSWORD
+          Remove-Item $pfx
+        } else {
+          .\make_package.ps1 -Version $version -Arch ${{ matrix.arch }} -TestCert
+        }
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: OpenInVim-${{ matrix.arch }}
+        path: out/*
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        path: out
+        merge-multiple: true
+
+    - uses: softprops/action-gh-release@v2
+      with:
+        files: out/*

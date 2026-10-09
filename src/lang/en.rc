@@ -1,0 +1,39 @@
+// OpenInVim - Windows 11 File Explorer context menu for Vim
+// Copyright (C) 2026 Sylvain Cresto
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+// English texts.  They are neutral: Windows uses them when there is no
+// translation in the language of the user.
+//
+// To add a language, copy this file to lang/<code>.rc, change the LANGUAGE
+// line, translate the texts and include the file in openinvim.rc and
+// openinvim_app.rc.  Use "" for a quote; "&" marks the keyboard shortcut.
+
+#pragma code_page(65001)
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+STRINGTABLE
+BEGIN
+    IDS_EDIT_IN_VIM         "Edit in Vim"
+    IDS_OPEN_IN_VIM         "Open in Vim"
+
+    IDS_SETTINGS_TITLE      "OpenInVim settings"
+    IDS_GROUP_GVIM          "gVim"
+    IDS_GVIM_LABEL          "Path of gvim.exe:"
+    IDS_GVIM_CUE            "Automatic detection"
+    IDS_BROWSE              "&Browse..."
+    IDS_STATUS_AUTO         "Detected automatically: "
+    IDS_STATUS_NOT_FOUND    "gVim was not found: select gvim.exe, or install Vim with the official installer.  Meanwhile, the context menu entry is hidden."
+    IDS_STATUS_MISSING      "This file does not exist."
+    IDS_GROUP_OPEN          "Opening files"
+    IDS_USE_TABS            "Open each file in a new &tab page"
+    IDS_CANCEL              "Cancel"
+    IDS_VERSION             "Version "
+    IDS_LICENSE             "Free software under the <a href=""https://www.gnu.org/licenses/gpl-3.0.html"">GNU GPL v3</a>."
+    IDS_BROWSE_TITLE        "Select gvim.exe"
+    // "|" separates the filter name and its pattern.
+    IDS_BROWSE_FILTER       "gvim.exe|gvim.exe|Programs (*.exe)|*.exe|"
+    IDS_ERROR_MISSING       "The selected gVim executable does not exist."
+    IDS_ERROR_SAVE          "The settings could not be saved."
+END

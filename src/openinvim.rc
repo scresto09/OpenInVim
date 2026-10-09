@@ -1,0 +1,12 @@
+// OpenInVim - Windows 11 File Explorer context menu for Vim
+// Copyright (C) 2026 Sylvain Cresto
+// SPDX-License-Identifier: GPL-3.0-or-later
+//
+// Resources of OpenInVim.dll: the translated menu titles.
+
+#include <windows.h>
+#include "strings.h"
+
+// Last: the LANGUAGE statements of these files apply to what follows them.
+#include "lang/en.rc"
+#include "lang/fr.rc"

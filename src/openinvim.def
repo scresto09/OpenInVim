@@ -1,0 +1,4 @@
+LIBRARY OpenInVim
+EXPORTS
+    DllGetClassObject   PRIVATE
+    DllCanUnloadNow     PRIVATE
