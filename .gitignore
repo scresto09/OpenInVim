@@ -1,0 +1,8 @@
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Build outputs
+/build/
+/out/
