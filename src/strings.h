@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
  * Identifiers of the translated texts (string tables in lang/*.rc) and the
- * function to load them.  Windows picks the language of the user, and
- * falls back to the neutral (English) table.
+ * function to load them in the language of the user, or else in English.
  */
 
 #ifndef OPENINVIM_STRINGS_H
@@ -39,17 +38,41 @@
 #include <string>
 
 /*
- * Text "id" from the string table of module "inst".
+ * Text "id" from the string table of module "inst" in language "lang", or
+ * an empty string.
+ */
+static inline std::wstring load_string_lang(HINSTANCE inst, UINT id,
+                                            LANGID lang)
+{
+    HRSRC       res;
+    HGLOBAL     mem;
+    const WCHAR *text;
+
+    res = FindResourceExW(inst, RT_STRING, MAKEINTRESOURCEW(id / 16 + 1),
+                                                                    lang);
+    if (res == NULL || (mem = LoadResource(inst, res)) == NULL
+            || (text = (const WCHAR *)LockResource(mem)) == NULL)
+        return std::wstring();
+    for (UINT i = 0; i < id % 16; i++)
+        text += 1 + *text;
+    return std::wstring(text + 1, *text);
+}
+
+/*
+ * Text "id" from the string table of module "inst", in the language of the
+ * user when there is a translation, otherwise in English.
  */
 static inline std::wstring load_string(HINSTANCE inst, UINT id)
 {
-    const WCHAR *text;
-    int         len;
+    LANGID          user = GetUserDefaultUILanguage();
+    std::wstring    text;
 
-    // With a zero size, LoadStringW returns a pointer to the resource
-    // itself, which is not NUL terminated.
-    len = LoadStringW(inst, id, (LPWSTR)&text, 0);
-    return len > 0 ? std::wstring(text, len) : std::wstring();
+    text = load_string_lang(inst, id,
+                        MAKELANGID(PRIMARYLANGID(user), SUBLANG_NEUTRAL));
+    if (text.empty())
+        text = load_string_lang(inst, id,
+                        MAKELANGID(LANG_ENGLISH, SUBLANG_NEUTRAL));
+    return text;
 }
 #endif
 

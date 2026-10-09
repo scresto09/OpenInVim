@@ -2,8 +2,8 @@
 // Copyright (C) 2026 Sylvain Cresto
 // SPDX-License-Identifier: GPL-3.0-or-later
 //
-// English texts.  They are neutral: Windows uses them when there is no
-// translation in the language of the user.
+// English texts, used when there is no translation in the language of the
+// user.
 //
 // To add a language, copy this file to lang/<code>.rc, change the LANGUAGE
 // line, translate the texts and include the file in openinvim.rc and
@@ -11,7 +11,7 @@
 
 #pragma code_page(65001)
 
-LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 STRINGTABLE
 BEGIN
