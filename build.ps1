@@ -14,6 +14,8 @@
      certificate (out\OpenInVim-test_<arch>.cer), see make_package.ps1.
   4. With -Install: trusts the test certificate (asks for administrator
      rights) and installs the package for the current user.
+  With -NoPackage, only steps 1 and 2 are done (used by the CI, which
+  creates and signs the package itself).
 
   Without -Version, the version is the one in the VERSION file plus a local
   build number, increased at each build (kept in out\.buildnumber), so that
@@ -27,7 +29,8 @@
 param(
   [ValidateSet("x64", "arm64")] [string] $Arch,
   [string] $Version,
-  [switch] $Install
+  [switch] $Install,
+  [switch] $NoPackage
 )
 
 $ErrorActionPreference = "Stop"
@@ -37,7 +40,7 @@ $hostArch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "x64
 if (-not $Arch) { $Arch = $hostArch }
 
 # Version: VERSION file (X.Y.Z) + local build number.
-if (-not $Version) {
+if (-not $Version -and -not $NoPackage) {
   $base = (Get-Content -Raw VERSION).Trim()
   if ($base -notmatch '^\d+\.\d+\.\d+$') { throw "VERSION must be X.Y.Z, not '$base'" }
   New-Item -ItemType Directory -Force out | Out-Null
@@ -83,6 +86,8 @@ if ($env:VSCMD_ARG_TGT_ARCH -eq $Arch -and (Get-Command nmake -ErrorAction Silen
 Write-Host "Building..." -ForegroundColor Cyan
 nmake /nologo -f Make_mvc.mak clean all
 if ($LASTEXITCODE -ne 0) { throw "Build failed" }
+
+if ($NoPackage) { exit 0 }
 
 # 3. Package, signed with a test certificate.
 Write-Host "Packaging..." -ForegroundColor Cyan
