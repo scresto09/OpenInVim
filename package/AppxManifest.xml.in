@@ -6,6 +6,10 @@
 
   MSIX package manifest.  The version, architecture and publisher
   placeholders are filled by make_package.ps1.
+
+  The identity name and the publisher display name are the ones reserved
+  in Microsoft Partner Center (Store ID 9ND5KG4GSKBD); the publisher of the
+  Store package is CN=4D7AE54D-4897-4AAF-AD4A-96A83C99020F.
 -->
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -15,7 +19,7 @@
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   IgnorableNamespaces="uap rescap desktop4 desktop5 com">
-  <Identity Name="OpenInVim.ContextMenu" ProcessorArchitecture="@ARCH@"
+  <Identity Name="SylvainCresto.OpenInVim" ProcessorArchitecture="@ARCH@"
             Publisher="@PUBLISHER@" Version="@VERSION@" />
   <Properties>
     <DisplayName>OpenInVim</DisplayName>
@@ -28,7 +32,9 @@
                         MaxVersionTested="10.0.26100.0" />
   </Dependencies>
   <Resources>
+    <!-- Languages of src/lang/*.rc, the first one is the default. -->
     <Resource Language="en-us" />
+    <Resource Language="fr" />
   </Resources>
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />

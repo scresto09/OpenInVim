@@ -21,17 +21,25 @@ pages.
 
 ## Install
 
-Double-click the `.msix` package.  To install it for all users, in an
+Install OpenInVim from the Microsoft Store:
+<https://apps.microsoft.com/detail/9ND5KG4GSKBD>
+
+Uninstall from Settings > Apps.
+
+### Test build
+
+A package built with `build` (or by the CI) is signed with a test
+certificate, which must first be trusted, in an administrator PowerShell:
+
+    Import-Certificate -FilePath OpenInVim-test_x64.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+
+Then double-click the `.msix` package.  To install it for all users, in an
 administrator PowerShell:
 
     Add-AppxProvisionedPackage -Online -SkipLicense -PackagePath OpenInVim_<version>_x64.msix
 
-A test build must first have its certificate trusted, in an administrator
-PowerShell:
-
-    Import-Certificate -FilePath OpenInVim-test_x64.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
-
-Uninstall from Settings > Apps.
+Uninstall the Store version before installing a test build, and the other
+way round: both add the same context menu entry.
 
 
 ## Build
@@ -43,6 +51,10 @@ Requires Visual Studio 2022 with "Desktop development with C++".
     build -Arch arm64   for Windows on ARM
 
 Translations are in `src/lang/*.rc`.
+
+For a `v1.2.3` tag, the CI also creates the `store-bundle` artifact:
+`OpenInVim_1.2.3.0.msixbundle`, unsigned, with the Partner Center publisher,
+to upload to the Microsoft Store, which signs it.
 
 
 ## License
