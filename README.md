@@ -9,7 +9,8 @@ each in a new tab page by default.
 
 Requires Vim, installed with the official installer from
 <https://www.vim.org/download.php>.
-OpenInVim is just a fun project I made for fun and is not affiliated with the Vim project.
+OpenInVim is a little project I built just for fun. It is free, licensed under
+the GPLv3, and is not affiliated with the Vim project.
 For any issues or questions, you can reach me at scresto [at] gmail [dot] com.
 
 ## Settings
